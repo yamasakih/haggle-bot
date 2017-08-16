@@ -1,6 +1,6 @@
 import unittest
 from util.game import Rule, Card, Player, Cards, NotHasTokenException, Token, Players, \
-                    NoPlayerException, Rules, Coin, Coins
+                    NoPlayerException, Rules, Coin, Coins, Vote
 
 
 class TestSample(unittest.TestCase):
@@ -299,6 +299,20 @@ class TestPlayers(unittest.TestCase):
 
     def test_id_de_search_sitemo_inaito_exception(self):
         self.assertRaises(NoPlayerException, lambda: self.players.search_by_id('000'))
+
+
+class TestVote(unittest.TestCase):
+
+    def setUp(self):
+        self.player1 = Player(id='001', name='foo')
+        self.player2 = Player(id='002', name='baz')
+        self.players = Players()
+        self.players.append(self.player1)
+        self.players.append(self.player2)
+        self.vote1 = Vote(player=self.player1, content='morning')
+
+    def test_reprで投票者と投票内容を表示する(self):
+        self.assertEqual(repr(self.vote1), '@foo morning')
 
 
 if __name__ == "__main__":

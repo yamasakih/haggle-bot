@@ -518,3 +518,78 @@ class GameManager:
 
     def set_token_type(self, token_type):
         self.token_type = token_type
+
+
+class Vote:
+
+    def __init__(self, player, content):
+        self.player = player
+        self.content = content
+
+    def __repr__(self):
+        return '@%s %s' % (self.player.name, self.content)
+
+
+"""
+
+    class Rule(Item):
+
+        def __init__(self, number, text):
+            self.number = number
+            self.text = text
+
+        def __repr__(self):
+            return self.__str__()
+
+        def __str__(self):
+            return '```ルール%s: %s```' % (self.number, self.text,)
+
+        def __eq__(self, other):
+            if isinstance(other, Rule):
+                return self.number == other.number and self.text == other.text
+            else:
+                return False
+
+        def is_match_by_number(self, number):
+            return self.number == number
+
+        def __lt__(self, other):
+            if isinstance(other, Rule):
+                return self.number < other.number
+            else:
+                return False
+
+    class Rules:
+
+        def __init__(self, rules):
+            self._rules = rules
+
+        def __str__(self):
+            return ' '.join([str(rule) for rule in self._rules])
+
+        def search(self, other):
+            for rule in self._rules:
+                if rule == other:
+                    return rule
+            else:
+                return None
+
+        def search_by_number(self, number):
+            for rule in self._rules:
+                if rule.is_match_by_number(number):
+                    return rule
+            else:
+                return None
+
+        def add(self, rule):
+            self._rules.append(rule)
+
+        def remove(self, rule):
+            self._rules.remove(rule)
+
+        def get_rules(self):
+            return self._rules
+
+        def sort(self):
+            self._rules.sort()
+"""
