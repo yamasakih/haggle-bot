@@ -530,6 +530,17 @@ class Vote:
         return '@%s %s' % (self.player.name, self.content)
 
 
+class Votes:
+
+    def __init__(self, votes):
+        self._votes = votes
+
+    def append(self, vote):
+        self._votes.append(vote)
+
+    def __repr__(self):
+        return '  '.join([repr(vote) for vote in self._votes])
+
 """
 
     class Rule(Item):

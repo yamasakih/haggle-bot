@@ -1,6 +1,6 @@
 import unittest
 from util.game import Rule, Card, Player, Cards, NotHasTokenException, Token, Players, \
-                    NoPlayerException, Rules, Coin, Coins, Vote
+                    NoPlayerException, Rules, Coin, Coins, Vote, Votes
 
 
 class TestSample(unittest.TestCase):
@@ -306,13 +306,37 @@ class TestVote(unittest.TestCase):
     def setUp(self):
         self.player1 = Player(id='001', name='foo')
         self.player2 = Player(id='002', name='baz')
+        self.vote1 = Vote(player=self.player1, content='morning')
+        self.vote2 = Vote(player=self.player2, content='noon')
+
+    def test_reprでvote1の投票者と投票内容を表示する(self):
+        self.assertEqual(repr(self.vote1), '@foo morning')
+
+    def test_reprでvote2の投票者と投票内容を表示する(self):
+        self.assertEqual(repr(self.vote2), '@baz noon')
+
+
+class TestVotes(unittest.TestCase):
+
+    def setUp(self):
+        self.player1 = Player(id='001', name='foo')
+        self.player2 = Player(id='002', name='baz')
+        self.player3 = Player(id='003', name='bar')
         self.players = Players()
         self.players.append(self.player1)
         self.players.append(self.player2)
+        self.players.append(self.player3)
         self.vote1 = Vote(player=self.player1, content='morning')
+        self.vote2 = Vote(player=self.player2, content='noon')
+        self.vote3 = Vote(player=self.player3, content='evening')
+        self.votes = Votes([self.vote1, self.vote2])
 
-    def test_reprで投票者と投票内容を表示する(self):
-        self.assertEqual(repr(self.vote1), '@foo morning')
+    def test_appendでvoteを追加することができる(self):
+        self.votes.append(self.vote3)
+        self.assertEqual(len(self.votes._votes), 3)
+
+    def test_reprで投票内容全てを表示する(self):
+        self.assertEqual(repr(self.votes), '@foo morning  @baz noon')
 
 
 if __name__ == "__main__":
