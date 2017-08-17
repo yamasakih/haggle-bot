@@ -529,6 +529,9 @@ class Vote:
     def __repr__(self):
         return '@%s %s' % (self.player.name, self.content)
 
+    def is_matched_by_player_name(self, name):
+        return self.player.name == name
+
 
 class Votes:
 
@@ -536,71 +539,21 @@ class Votes:
         self._votes = votes
 
     def append(self, vote):
-        self._votes.append(vote)
+        try:
+            _vote = self.search_player_vote_by_player_name(vote.player.name)
+            _vote.content = vote.content
+        except NoPlayerException:
+            self._votes.append(vote)
+
+    def search_player_vote_by_player_name(self, name):
+        for vote in self._votes:
+            if vote.is_matched_by_player_name(name):
+                return vote
+        else:
+            raise NoPlayerException
 
     def __repr__(self):
         return '  '.join([repr(vote) for vote in self._votes])
 
-"""
-
-    class Rule(Item):
-
-        def __init__(self, number, text):
-            self.number = number
-            self.text = text
-
-        def __repr__(self):
-            return self.__str__()
-
-        def __str__(self):
-            return '```ルール%s: %s```' % (self.number, self.text,)
-
-        def __eq__(self, other):
-            if isinstance(other, Rule):
-                return self.number == other.number and self.text == other.text
-            else:
-                return False
-
-        def is_match_by_number(self, number):
-            return self.number == number
-
-        def __lt__(self, other):
-            if isinstance(other, Rule):
-                return self.number < other.number
-            else:
-                return False
-
-    class Rules:
-
-        def __init__(self, rules):
-            self._rules = rules
-
-        def __str__(self):
-            return ' '.join([str(rule) for rule in self._rules])
-
-        def search(self, other):
-            for rule in self._rules:
-                if rule == other:
-                    return rule
-            else:
-                return None
-
-        def search_by_number(self, number):
-            for rule in self._rules:
-                if rule.is_match_by_number(number):
-                    return rule
-            else:
-                return None
-
-        def add(self, rule):
-            self._rules.append(rule)
-
-        def remove(self, rule):
-            self._rules.remove(rule)
-
-        def get_rules(self):
-            return self._rules
-
-        def sort(self):
-            self._rules.sort()
-"""
+    def clear(self):
+        self._votes = []

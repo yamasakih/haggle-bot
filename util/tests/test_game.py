@@ -315,6 +315,12 @@ class TestVote(unittest.TestCase):
     def test_reprでvote2の投票者と投票内容を表示する(self):
         self.assertEqual(repr(self.vote2), '@baz noon')
 
+    def test_is_matched_by_player_nameで投票した人と一致していたらTRUEを返す(self):
+        self.assertTrue(self.vote1.is_matched_by_player_name('foo'))
+        self.assertFalse(self.vote1.is_matched_by_player_name('bar'))
+        self.assertTrue(self.vote2.is_matched_by_player_name('baz'))
+        self.assertFalse(self.vote2.is_matched_by_player_name('foo'))
+
 
 class TestVotes(unittest.TestCase):
 
@@ -335,8 +341,26 @@ class TestVotes(unittest.TestCase):
         self.votes.append(self.vote3)
         self.assertEqual(len(self.votes._votes), 3)
 
+    def test_appendですでに同じプレイヤーから投票されてた場合上書きする(self):
+        vote = Vote(player=self.player1, content='hello')
+        self.votes.append(vote)
+        self.assertEqual(len(self.votes._votes), 2)
+        self.assertEqual(repr(self.votes), '@foo hello  @baz noon')
+
+    def test_search_player_vote_by_player_nameで特定のplayerの投票を探す(self):
+        self.assertEqual(self.votes.search_player_vote_by_player_name('foo'), self.vote1)
+        self.assertEqual(self.votes.search_player_vote_by_player_name('baz'), self.vote2)
+
+    def test_search_player_vote_by_player_nameで特定のplayerの投票が見つからない場合エラーを返す(self):
+        self.assertRaises(NoPlayerException, lambda: self.votes.search_player_vote_by_player_name('piyo'))
+
     def test_reprで投票内容全てを表示する(self):
         self.assertEqual(repr(self.votes), '@foo morning  @baz noon')
+
+    def test_clearで投票内容を全て削除する(self):
+        self.assertEqual(repr(self.votes), '@foo morning  @baz noon')
+        self.votes.clear()
+        self.assertEqual(len(self.votes._votes), 0)
 
 
 if __name__ == "__main__":
