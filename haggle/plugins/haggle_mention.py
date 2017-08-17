@@ -9,6 +9,7 @@ from util.game import *
 haggle_bot_name = "boss"
 
 players = Players()
+votes = Votes([])
 game_manager = GameManager()
 game_has_started_message = 'ゲームのための準備はすでにされています。'
 game_staring_message = 'ゲーム%sのための準備をしました！'
@@ -38,6 +39,8 @@ rule_sort_message = 'ルールを並びかえました！'
 before_game_start_message = 'ゲームはまだ開始されていません。もうしばらくお待ち下さい。'
 low_coin_message = '%sは%d枚しか持っていません。'
 other_exception_message = '入力が正しくありません。わからない場合はGMに問い合わせてください。'
+clear_vote_message = '投票をリセットしました！'
+vote_done_message = '投票しました！'
 
 
 def get_name_by_id(users, id):
@@ -153,6 +156,7 @@ def show_one_card(message, card):
             except NoPlayerException:
                 message.reply(no_player_exception_message)
         else:
+            print('show_one_card')
             message.reply(other_exception_message)
     else:
         message.reply(before_game_start_message)
@@ -188,6 +192,7 @@ def show_coins(message, coin_info):
             except NoPlayerException:
                 message.reply(no_player_exception_message)
         else:
+            print('show_coins')
             message.reply(other_exception_message)
     else:
         message.reply(before_game_start_message)
@@ -248,6 +253,7 @@ def give_card(message, card, other_user):
             except NoPlayerException:
                 message.reply(no_player_exception_message)
         else:
+            print('give_card')
             message.reply(other_exception_message)
     else:
         message.reply(before_game_start_message)
@@ -301,6 +307,7 @@ def give_coins(message, coin_info, other_user):
             except NoPlayerException:
                 message.reply(no_player_exception_message)
         else:
+            print('give_coins')
             message.reply(other_exception_message)
     else:
         message.reply(before_game_start_message)
@@ -360,5 +367,36 @@ def sort_rule(message):
             message.reply(rule_sort_message)
         except NoPlayerException:
             message.reply(no_player_exception_message)
+    else:
+        message.reply(before_game_start_message)
+
+
+@respond_to('^vote (\S*)', re.IGNORECASE)
+def vote(message, content):
+    if game_manager.does_start:
+        user = message.body['user']
+        try:
+            player = players.search_by_id(user)
+            votes.append(Vote(player=player, content=content))
+            message.reply(vote_done_message)
+        except NoPlayerException:
+            message.reply(no_player_exception_message)
+    else:
+        message.reply(before_game_start_message)
+
+
+@respond_to('^open list', re.IGNORECASE)
+def open_list(message):
+    if game_manager.does_start:
+        message.reply(repr(votes))
+    else:
+        message.reply(before_game_start_message)
+
+
+@respond_to('^clear vote', re.IGNORECASE)
+def clear_vote(message):
+    if game_manager.does_start:
+        votes.clear()
+        message.reply(clear_vote_message)
     else:
         message.reply(before_game_start_message)

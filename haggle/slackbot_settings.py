@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-API_TOKEN = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+#API_TOKEN = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 
-default_reply = '入力が正しくありません。わからない場合はGMに問い合わせてください。'
+#default_reply = '入力が正しくありません。わからない場合はGMに問い合わせてください。'
 
 PLUGINS = [
     'plugins',
