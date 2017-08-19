@@ -41,7 +41,7 @@ low_coin_message = '%sは%d枚しか持っていません。'
 other_exception_message = '入力が正しくありません。わからない場合はGMに問い合わせてください。'
 clear_vote_message = '投票をリセットしました！'
 vote_done_message = '投票しました！'
-
+no_vote_message = 'まだ投票されていません！'
 
 def get_name_by_id(users, id):
     for _name, _id in users:
@@ -371,13 +371,16 @@ def sort_rule(message):
         message.reply(before_game_start_message)
 
 
-@respond_to('^vote (\S*)', re.IGNORECASE)
-def vote(message, content):
+@respond_to('^vote (.*)', re.IGNORECASE)
+def vote(message, contents):
     if game_manager.does_start:
         user = message.body['user']
         try:
             player = players.search_by_id(user)
-            votes.append(Vote(player=player, content=content))
+            if votes.has_player_votes(player):
+                votes.delete_player_votes(player)
+            for content in contents.split():
+                votes.append(Vote(player=player, content=content))
             message.reply(vote_done_message)
         except NoPlayerException:
             message.reply(no_player_exception_message)
@@ -388,7 +391,21 @@ def vote(message, content):
 @respond_to('^open list', re.IGNORECASE)
 def open_list(message):
     if game_manager.does_start:
-        message.reply(repr(votes))
+        if votes.show_list() != '':
+            message.send(votes.show_list())
+        else:
+            message.reply(no_vote_message)
+    else:
+        message.reply(before_game_start_message)
+
+
+@respond_to('^open set', re.IGNORECASE)
+def open_list(message):
+    if game_manager.does_start:
+        if votes.show_set() != '':
+            message.send(votes.show_set())
+        else:
+            message.reply(no_vote_message)
     else:
         message.reply(before_game_start_message)
 
