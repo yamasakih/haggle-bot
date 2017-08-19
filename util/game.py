@@ -556,6 +556,20 @@ class Votes:
         else:
             raise NoPlayerException
 
+    def search_player_vote_by_player(self, player):
+        for vote in self._votes:
+            if vote.is_matched_by_player_name(player.name):
+                return vote
+        else:
+            raise NoPlayerException
+
+    def has_player_votes(self, player):
+        try:
+            self.search_player_vote_by_player(player)
+            return True
+        except NoPlayerException:
+            return False
+
     def __repr__(self):
         return '  '.join([repr(vote) for vote in self._votes])
 

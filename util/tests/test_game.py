@@ -362,6 +362,9 @@ class TestVotes(unittest.TestCase):
         self.votes.clear()
         self.assertEqual(len(self.votes._votes), 0)
 
+    def test_has_player_votesで特定のplayerがすでに投票していたらTrueを返す(self):
+        self.assertTrue(self.votes.has_player_votes(self.player1))
+        self.assertFalse(self.votes.has_player_votes(Player(id='004', name='piyo')))
 
 if __name__ == "__main__":
     unittest.main()
