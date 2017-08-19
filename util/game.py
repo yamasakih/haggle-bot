@@ -543,31 +543,38 @@ class Votes:
         self._votes = votes
 
     def append(self, vote):
-        try:
-            _vote = self.search_player_vote_by_player_name(vote.player.name)
-            _vote.content = vote.content
-        except NoPlayerException:
-            self._votes.append(vote)
+        self._votes.append(vote)
+
+    def delete(self, vote):
+        self._votes.remove(vote)
+
+    def delete_player_votes(self, player):
+        while True:
+            try:
+                vote = self.search_player_vote_by_player(player)
+                self.delete(vote)
+            except NoVoteException:
+                break
 
     def search_player_vote_by_player_name(self, name):
         for vote in self._votes:
             if vote.is_matched_by_player_name(name):
                 return vote
         else:
-            raise NoPlayerException
+            raise NoVoteException
 
     def search_player_vote_by_player(self, player):
         for vote in self._votes:
             if vote.is_matched_by_player_name(player.name):
                 return vote
         else:
-            raise NoPlayerException
+            raise NoVoteException
 
     def has_player_votes(self, player):
         try:
             self.search_player_vote_by_player(player)
             return True
-        except NoPlayerException:
+        except NoVoteException:
             return False
 
     def __repr__(self):

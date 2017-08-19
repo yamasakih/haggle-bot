@@ -1,6 +1,6 @@
 import unittest
 from util.game import Rule, Card, Player, Cards, NotHasTokenException, Token, Players, \
-                    NoPlayerException, Rules, Coin, Coins, Vote, Votes
+                    NoPlayerException, Rules, Coin, Coins, Vote, Votes, NoVoteException
 
 
 class TestSample(unittest.TestCase):
@@ -341,18 +341,34 @@ class TestVotes(unittest.TestCase):
         self.votes.append(self.vote3)
         self.assertEqual(len(self.votes._votes), 3)
 
-    def test_appendですでに同じプレイヤーから投票されてた場合上書きする(self):
-        vote = Vote(player=self.player1, content='hello')
-        self.votes.append(vote)
-        self.assertEqual(len(self.votes._votes), 2)
-        self.assertEqual(repr(self.votes), '@foo hello  @baz noon')
-
     def test_search_player_vote_by_player_nameで特定のplayerの投票を探す(self):
         self.assertEqual(self.votes.search_player_vote_by_player_name('foo'), self.vote1)
         self.assertEqual(self.votes.search_player_vote_by_player_name('baz'), self.vote2)
 
+    def test_search_player_vote_by_playerで特定のplayerの投票を探す(self):
+        self.assertEqual(self.votes.search_player_vote_by_player(self.player1), self.vote1)
+        self.assertEqual(self.votes.search_player_vote_by_player(self.player2), self.vote2)
+
     def test_search_player_vote_by_player_nameで特定のplayerの投票が見つからない場合エラーを返す(self):
-        self.assertRaises(NoPlayerException, lambda: self.votes.search_player_vote_by_player_name('piyo'))
+        self.assertRaises(NoVoteException, lambda: self.votes.search_player_vote_by_player_name('piyo'))
+
+    def test_search_player_vote_by_playerで特定のplayerの投票が見つからない場合エラーを返す(self):
+        self.assertRaises(NoVoteException, lambda: self.votes.search_player_vote_by_player(Player(id='004', name='piyo')))
+
+    def test_deleteで特定のvoteを削除する(self):
+        self.assertEqual(len(self.votes._votes), 2)
+        self.votes.delete(self.vote1)
+        self.assertEqual(len(self.votes._votes), 1)
+        self.assertEqual(repr(self.votes), '@baz noon')
+
+    def test_deleteで特定のplayerの投票を全て削除する(self):
+        vote = Vote(player=self.player1, content='hello')
+        self.votes.append(vote)
+        print(self.votes)
+        self.assertEqual(len(self.votes._votes), 3)
+        self.votes.delete_player_votes(self.player1)
+        self.assertEqual(len(self.votes._votes), 1)
+        self.assertEqual(repr(self.votes), '@baz noon')
 
     def test_reprで投票内容全てを表示する(self):
         self.assertEqual(repr(self.votes), '@foo morning  @baz noon')
