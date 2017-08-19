@@ -577,6 +577,34 @@ class Votes:
         except NoVoteException:
             return False
 
+    def show_list(self):
+        vote_dic = {}
+        for vote in self._votes:
+            if vote_dic.get(vote.player.name, None):
+                vote_dic[vote.player.name].append(vote.content)
+            else:
+                vote_dic[vote.player.name] = [vote.content]
+        player_contents = []
+        for key, item in vote_dic.items():
+            values = ' '.join(item)
+            player_content = '@%s: %s' % (key, values)
+            player_contents.append(player_content)
+        return '   '.join(player_contents)
+
+    def show_set(self):
+        vote_dic = {}
+        for vote in self._votes:
+            if vote_dic.get(vote.content, None):
+                vote_dic[vote.content].append(vote.player.name)
+            else:
+                vote_dic[vote.content] = [vote.player.name]
+        content_players = []
+        for key, item in vote_dic.items():
+            values = ' '.join(item)
+            content_player = '%s: %s' % (key, values)
+            content_players.append(content_player)
+        return '   '.join(content_players)
+
     def __repr__(self):
         return '  '.join([repr(vote) for vote in self._votes])
 
