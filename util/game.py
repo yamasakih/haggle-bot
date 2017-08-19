@@ -533,6 +533,10 @@ class Vote:
         return self.player.name == name
 
 
+class NoVoteException(Exception):
+    pass
+
+
 class Votes:
 
     def __init__(self, votes):
