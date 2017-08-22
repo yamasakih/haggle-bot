@@ -327,6 +327,13 @@ class Player:
     def is_matched_by_name(self, name):
         return self.name == name
 
+    def is_matched_by_mention(self, mention):
+        """メンションはユーザから送られた時点で内部で自動でplyaer.idを<@ >で囲ったものに変換される"""
+        return '<@%s>' % self.id == mention
+
+    def is_matched_by_name_or_mention(self, object):
+        return self.is_matched_by_name(object) or self.is_matched_by_mention(object)
+
     def is_matched_by_id(self, id):
         return self.id == id
 
@@ -359,6 +366,20 @@ class Players:
     def search_by_name(self, name):
         for player in self.players:
             if player.is_matched_by_name(name):
+                return player
+        else:
+            raise NoPlayerException
+
+    def search_by_mention(self, mention):
+        for player in self.players:
+            if player.is_matched_by_mention(mention):
+                return player
+        else:
+            raise NoPlayerException
+
+    def search_by_name_or_mention(self, object):
+        for player in self.players:
+            if player.is_matched_by_name_or_mention(object):
                 return player
         else:
             raise NoPlayerException

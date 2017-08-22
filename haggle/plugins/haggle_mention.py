@@ -218,7 +218,7 @@ def give_card(message, card, other_user):
                     else:
                         suit, number = 'j', 0
 
-                    other_player = players.search_by_name(other_user)
+                    other_player = players.search_by_name_or_mention(other_user)
 
                     card_emoji = all_suit[suit] + all_numbers[int(number)]
 
@@ -255,12 +255,11 @@ def give_coins(message, coin_info, other_user):
             user = message.body['user']
             try:
                 player = players.search_by_id(user)
-
                 try:
                     give_coins = []
                     coin_info_list = coin_info.strip().split(',')
                     coins = get_tokens_by_message(message)
-                    other_player = players.search_by_name(other_user)
+                    other_player = players.search_by_name_or_mention(other_user)
                     for coin_info in coin_info_list:
                         coin_info = coin_info.lower()
                         color, num = coin_info[0], int(coin_info[1:])
@@ -308,7 +307,7 @@ def give_rule(message, number, other_user):
             player = players.search_by_id(user)
 
             try:
-                other_player = players.search_by_name(other_user)
+                other_player = players.search_by_name_or_mention(other_user)
 
                 player.give_rule(other_player=other_player, number=int(number))
 

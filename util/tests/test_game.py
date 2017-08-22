@@ -203,6 +203,20 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(len(self.player.rules._rules), 1)
         self.assertEqual(len(self.other_player.rules._rules), 2)
 
+    def test_is_matched_by_nameで名前が正しければtrueを返す(self):
+        self.assertTrue(self.player.is_matched_by_name('foo'))
+        self.assertTrue(self.other_player.is_matched_by_name('baz'))
+
+    def test_is_matched_by_mentionで名前をメンションで指定したものが正しければtrueを返す(self):
+        self.assertTrue(self.player.is_matched_by_mention('<@001>'))
+        self.assertTrue(self.other_player.is_matched_by_mention('<@002>'))
+
+    def test_is_matched_by_name_or_mentionで名前か名前をメンションで指定しても正しければtrueを返す(self):
+        self.assertTrue(self.player.is_matched_by_name_or_mention('<@001>'))
+        self.assertTrue(self.player.is_matched_by_name_or_mention('foo'))
+        self.assertTrue(self.other_player.is_matched_by_name_or_mention('<@002>'))
+        self.assertFalse(self.other_player.is_matched_by_name_or_mention('foo'))
+
 
 class TestCoin(unittest.TestCase):
 
@@ -299,6 +313,13 @@ class TestPlayers(unittest.TestCase):
 
     def test_id_de_search_sitemo_inaito_exception(self):
         self.assertRaises(NoPlayerException, lambda: self.players.search_by_id('000'))
+
+    def test_search_by_mentionでメンションで検索できる(self):
+        self.assertEqual(self.players.search_by_mention('<@002>'), self.player2)
+
+    def test_search_by_name_or_mentionで名前かまたはメンションで検索できる(self):
+        self.assertEqual(self.players.search_by_name_or_mention('<@001>'), self.player1)
+        self.assertEqual(self.players.search_by_name_or_mention('baz'), self.player2)
 
 
 class TestVote(unittest.TestCase):
