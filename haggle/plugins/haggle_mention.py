@@ -98,7 +98,7 @@ def get_rules_by_message(message):
     return player.rules
 
 
-@respond_to('^hand$', re.IGNORECASE)
+@respond_to('^hand all$', re.IGNORECASE)
 def show_hand(message):
     if game_manager.does_start:
         try:
@@ -109,19 +109,7 @@ def show_hand(message):
         message.reply(before_game_start_message)
 
 
-@respond_to('^heart ((?:[r,b,g,y,p][1-9])+) (.+)', re.IGNORECASE)
-def show_hand(message, hearts, other_player):
-    if game_manager.does_start:
-        print(hearts, other_player)
-        try:
-            message.reply(str(get_tokens_by_message(message)))
-        except NoPlayerException:
-            message.reply(no_player_exception_message)
-    else:
-        message.reply(before_game_start_message)
-
-
-@respond_to('^rule$', re.IGNORECASE)
+@respond_to('^rule all$', re.IGNORECASE)
 def show_rules(message):
     if game_manager.does_start:
         try:
@@ -156,7 +144,6 @@ def show_one_card(message, card):
             except NoPlayerException:
                 message.reply(no_player_exception_message)
         else:
-            print('show_one_card')
             message.reply(other_exception_message)
     else:
         message.reply(before_game_start_message)
@@ -231,7 +218,7 @@ def give_card(message, card, other_user):
                     else:
                         suit, number = 'j', 0
 
-                    other_player = players.search_by_name(other_user)
+                    other_player = players.search_by_name_or_mention(other_user)
 
                     card_emoji = all_suit[suit] + all_numbers[int(number)]
 
@@ -268,12 +255,11 @@ def give_coins(message, coin_info, other_user):
             user = message.body['user']
             try:
                 player = players.search_by_id(user)
-
                 try:
                     give_coins = []
                     coin_info_list = coin_info.strip().split(',')
                     coins = get_tokens_by_message(message)
-                    other_player = players.search_by_name(other_user)
+                    other_player = players.search_by_name_or_mention(other_user)
                     for coin_info in coin_info_list:
                         coin_info = coin_info.lower()
                         color, num = coin_info[0], int(coin_info[1:])
@@ -321,7 +307,7 @@ def give_rule(message, number, other_user):
             player = players.search_by_id(user)
 
             try:
-                other_player = players.search_by_name(other_user)
+                other_player = players.search_by_name_or_mention(other_user)
 
                 player.give_rule(other_player=other_player, number=int(number))
 
@@ -389,7 +375,7 @@ def vote(message, contents):
 
 
 @respond_to('^open list', re.IGNORECASE)
-def open_list(message):
+def open_vote_list(message):
     if game_manager.does_start:
         if votes.show_list() != '':
             message.send(votes.show_list())
@@ -400,7 +386,7 @@ def open_list(message):
 
 
 @respond_to('^open set', re.IGNORECASE)
-def open_list(message):
+def open_vote_set(message):
     if game_manager.does_start:
         if votes.show_set() != '':
             message.send(votes.show_set())
